@@ -1,4 +1,4 @@
 package com.faleite.api_ai.chat;
 
-public record ChatMessage() {
+public record ChatMessage(String message) {
 }
