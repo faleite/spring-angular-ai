@@ -12,3 +12,11 @@ Content-Type: application/json
 {
     "message": "Conte uma piada sobre Java"
 }
+
+### chat with memory
+POST localhost:8080/api/chat-memory
+Content-Type: application/json
+
+{
+  "message": "Conte uma piada sobre Java"
+}
