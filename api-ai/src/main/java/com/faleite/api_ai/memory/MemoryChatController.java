@@ -16,9 +16,14 @@ public class MemoryChatController {
         this.chatService = chatService;
     }
 
-    @PostMapping
+    /*@PostMapping
     ChatMessage simpleChat(@RequestBody ChatMessage message) {
-        String response = chatService.simpleChat(message.message());
+        String response = chatService.chat(message.message());
         return new ChatMessage(response);
+    }*/
+
+    @PostMapping("/start")
+    MemoryChatService.NewChatResponse startNewChat(@RequestBody ChatMessage message) {
+        return this.chatService.createNewChat(message.message());
     }
 }
