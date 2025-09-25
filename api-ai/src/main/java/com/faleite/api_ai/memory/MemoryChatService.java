@@ -9,6 +9,8 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MemoryChatService {
 
@@ -38,20 +40,17 @@ public class MemoryChatService {
 
     public String chat(String message, String chatID) {
         return this.chatClient.prompt()
-//                .advisors( a -> a.param(ChatMemory.CONVERSATION_ID, "123456"))
+                .advisors( a -> a.param(ChatMemory.CONVERSATION_ID, chatID))
                 .user(message)
                 .call()
                 .content();
     }
 
-    record NewChatResponse(String chatId, String description) {}
-
     public NewChatResponse createNewChat(String message){
         String description = generateDescription(message);
         String chatId = this.memoryChatRepository.generateChatId(USER_ID, description);
-        // prompt the chat client to create a new chat with the generated id
-
-        return new NewChatResponse(chatId, description);
+        String response = this.chat(message, chatId);
+        return new NewChatResponse(chatId, description, response);
     }
 
     private String generateDescription(String message){
@@ -59,5 +58,13 @@ public class MemoryChatService {
                 .user(DESCRIPTION_PROMPT + message)
                 .call()
                 .content();
+    }
+
+    public List<Chat> getAllChatsForUser(){
+        return this.memoryChatRepository.getAllChatsForUser(USER_ID);
+    }
+
+    public List<ChatMessage> getChatMessages(String chatId){
+        return this.memoryChatRepository.getChatMessages(chatId);
     }
 }

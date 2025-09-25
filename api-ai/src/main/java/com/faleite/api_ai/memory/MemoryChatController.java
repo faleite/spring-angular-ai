@@ -1,10 +1,8 @@
 package com.faleite.api_ai.memory;
 
-import com.faleite.api_ai.chat.ChatMessage;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/chat-memory")
@@ -16,14 +14,24 @@ public class MemoryChatController {
         this.chatService = chatService;
     }
 
-    /*@PostMapping
-    ChatMessage simpleChat(@RequestBody ChatMessage message) {
-        String response = chatService.chat(message.message());
-        return new ChatMessage(response);
-    }*/
+    @PostMapping("/{chatId}")
+    ChatMessage simpleChat(@PathVariable String chatId, @RequestBody ChatMessage message) {
+        String response = chatService.chat(message.content(), chatId);
+        return new ChatMessage(response, "ASSISTANT");
+    }
 
     @PostMapping("/start")
-    MemoryChatService.NewChatResponse startNewChat(@RequestBody ChatMessage message) {
-        return this.chatService.createNewChat(message.message());
+    NewChatResponse startNewChat(@RequestBody ChatMessage message) {
+        return this.chatService.createNewChat(message.content());
+    }
+
+    @GetMapping
+    List<Chat> getAllChatsForUser(){
+        return this.chatService.getAllChatsForUser();
+    }
+
+    @GetMapping("/{chatId}")
+    List<ChatMessage> getChatMessages(@PathVariable String chatId){
+        return this.chatService.getChatMessages(chatId);
     }
 }
